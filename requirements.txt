@@ -1,3 +1,16 @@
 Flask~=3.1.3
-numpy~=2.5.0
-opencv-python
+numpy>=2.0.0,<2.5.0
+opencv-python>=4.10.0.84
+
+# --- Core Frameworks per Deep Learning ---
+tensorflow>=2.15.0; python_version == "3.11"
+keras>=3.0.0
+
+pandas>=2.0.0
+
+# --- Visualizzazione Grafica e Plotting ---
+matplotlib>=3.7.0
+
+# --- Utility di Sistema e Download ---
+kagglehub>=0.2.0
+pathlib>=1.0.1
