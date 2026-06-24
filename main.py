@@ -4,7 +4,10 @@ from it.akron.unet import UNetStandard
 from it.akron.augmentation import CrackDataAugmenter
 import tensorflow as tf
 import numpy as np
-
+import os
+import cv2
+import matplotlib.pyplot as plt
+import keras
 
 
 
@@ -28,8 +31,8 @@ def main():
     test_ds  = test_ds.prefetch(buffer_size=tf.data.AUTOTUNE)
     
 # =================================================================
-    # BLOCCO DI TEST DIAGNOSTICI (Tabulato dentro il main)
-    # =================================================================
+# BLOCCO DI TEST DIAGNOSTICI 
+# =================================================================
     print("\n=== AVVIO TEST DI VERIFICA CARICAMENTO ===")
     
     # Estraiamo un solo batch dal train_ds usando .take(1)
@@ -62,6 +65,41 @@ def main():
 
     print("Pipeline dati inizializzata e ottimizzata con successo!")
 
+# =====================================================================
+# CARICAMENTO DEL MODELLO
+# =====================================================================
+    '''
+    Il modello U-NET è stato addestrato con successo su un notebook in Google Colab e salvato come "best_unet_model.keras" nella cartella /models.
+    '''
+    MODEL_PATH = "models/best_unet_model.keras"
+
+    print("Caricamento del modello in corso...")
+    # Passiamo le metriche custom tramite il parametro custom_objects
+    model = keras.models.load_model(
+        MODEL_PATH,
+        custom_objects={
+            "dice_bce_loss": SegmentationMetrics.dice_bce_loss,
+            "dice_coefficient": SegmentationMetrics.dice_coefficient
+        }
+    )
+    print("Modello caricato con successo!")
+
+    print("\nAvvio della valutazione su tutto il Test Set...")
+    
+    # evaluate() restituisce una lista con i valori delle metriche nell'ordine in cui sono state compilate
+    results = model.evaluate(test_ds, verbose=1)
+    
+    # Di solito l'ordine è: [Loss, Accuracy, Dice_Coefficient]
+    # Puoi verificare l'ordine esatto stampando model.metrics_names
+    metrics_summary = dict(zip(model.metrics_names, results))
+
+    # --- 4. Stampa del Report Finale ---
+    print("\n" + "="*40)
+    print("        REPORT PERFORMANCE COMPLETO")
+    print("="*40)
+    for metric_name, value in metrics_summary.items():
+        print(f"-> {metric_name:<20}: {value:.4f}")
+    print("="*40)
 
 
 if __name__ == "__main__":

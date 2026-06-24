@@ -1,1 +1,4 @@
-/data
+data/
+models/
+*.keras
+*.h5
