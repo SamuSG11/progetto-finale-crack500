@@ -83,8 +83,11 @@ che viene poi trasformata in una maschera binaria (crack / background)
 La fase di valutazione del modello si basa sia su funzioni di loss utilizzate durante l'addestramento
 sia su metriche di valutazione utilizzate per misurare la qualità della segmentazione.
 
-- **Binary Cross Entropy (BCE Loss)**  
-  Misura la differenza tra la probabilità predetta dal modello e la classe reale di ciascun pixel
+- **Dice + Binary Cross Entropy Loss (Dice BCE Loss)**  
+  Misura combinata che unisce:
+  - la **Binary Cross Entropy (BCE)**, che valuta l’errore pixel per pixel tra probabilità predette e label reali
+  - il **Dice Loss**, che misura la sovrapposizione tra maschera predetta e ground truth
+
 
 - **Dice Coefficient**  
   Misura il grado di sovrapposizione tra la segmentazione predetta e la ground truth. Assume valori compresi tra 0 e 1, dove 1 indica una corrispondenza perfetta.
@@ -171,7 +174,7 @@ http://127.0.0.1:5000/dataset/augment
 ### dataset/preview_aug [GET]
 
 Permette di visionare lo stato dell'augmentation.
-Ritorna errore se essa non è nìancora stata effettuata.
+Ritorna errore se essa non è ancora stata effettuata.
 
 ```
 http://127.0.0.1:5000/dataset/preview_aug
