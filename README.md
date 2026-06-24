@@ -152,3 +152,27 @@ Il progetto è provvisto di diversi endpoint, consultabili nella route **home**.
 ```
 http://127.0.0.1:5000/
 ```
+### dataset/build [POST]
+
+Prima route da dover lanciare. Permette il **caricamento del dataset**.
+
+```
+http://127.0.0.1:5000/dataset/build
+```
+
+### dataset/augment [POST]
+
+Applica la **data augmentation** al dataset Crack500 precedentemente caricato.
+
+```
+http://127.0.0.1:5000/dataset/augment
+```
+
+### dataset/preview_aug [GET]
+
+Permette di visionare lo stato dell'augmentation.
+Ritorna errore se essa non è nìancora stata effettuata.
+
+```
+http://127.0.0.1:5000/dataset/preview_aug
+```
