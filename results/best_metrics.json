@@ -1,0 +1,22 @@
+{
+    "model_summary": {
+        "total_parameters": 31049409,
+        "trainable_parameters": 31037633,
+        "non_trainable_parameters": 11776,
+        "loss_function": "<function SegmentationMetrics.dice_bce_loss at 0x7bd94c40a7a0>",
+        "monitored_metrics": [
+            "loss",
+            "compile_metrics"
+        ]
+    },
+    "best_epoch_metrics": {
+        "train": {
+            "loss": 0.26524218916893005,
+            "compile_metrics": 0.8201579451560974
+        },
+        "validation": {
+            "loss": 0.2879781723022461,
+            "compile_metrics": 0.8214633464813232
+        }
+    }
+}

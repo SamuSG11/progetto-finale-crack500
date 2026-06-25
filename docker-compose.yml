@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: flask-ml-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - model_data:/app/models
+    restart: unless-stopped
+
+volumes:
+  model_data:

@@ -14,6 +14,18 @@ def get_model_best_metrics():
     Endpoint per estrarre i parametri del modello e calcolare al volo
     le metriche della 'best epoch' usando i dati salvati in cache.
     """
+
+    print("--- DEBUG CAPACITÀ CACHE ---")
+    print("Chiavi attualmente presenti in DATASET_CACHE:", list(DATASET_CACHE.keys()))
+    print("ID della memoria del dizionario:", id(DATASET_CACHE))
+    print("----------------------------")
+
+    if "train_opt" not in DATASET_CACHE or "val_opt" not in DATASET_CACHE:
+        return jsonify({
+            "status": "error",
+            "message": f"Dataset non trovati. Chiavi in cache: {list(DATASET_CACHE.keys())}"
+        }), 400
+
     # 1. Controllo di sicurezza sui dati in cache
     if "train_opt" not in DATASET_CACHE or "val_opt" not in DATASET_CACHE:
         return jsonify({
