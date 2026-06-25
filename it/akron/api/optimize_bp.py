@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 import tensorflow as tf
+from it.akron.state import DATASET_CACHE
 
 optimize_bp = Blueprint('optimize', __name__)
 

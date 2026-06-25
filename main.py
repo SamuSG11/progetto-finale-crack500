@@ -104,6 +104,15 @@ def main():
         print(f"-> {metric_name:<20}: {value:.4f}")
     print("="*40)
     '''
+    # --- INFO 1: I PARAMETRI E L'ARCHITETTURA ---
+    print("=== ARCHITETTURA E PARAMETRI ===")
+    model.summary() 
+    # Questo ti sputa fuori il numero di parametri totali, addestrabili e non addestrabili.
+
+    # --- INFO 2: LE METRICHE DI COMPILAZIONE ---
+    print("\n=== METRICHE E LOSS IMPOSTATE ===")
+    print("Loss function:", model.loss)
+    print("Metriche monitorate:", model.metrics_names)
 
 # ====================================================================
 # PREVISIONI SU UNA NUOVA IMMAGINE 
@@ -126,7 +135,7 @@ def main():
     
 
     # 3. Lanci l'inferenza su qualsiasi immagine inserendo semplicemente il percorso della foto
-    PATH_FOTO = "exmples/CRACK500_esempio_immagine.jpg"
+    PATH_FOTO = "examples/CRACK500_esempio_immagine.jpg"
     maschera_finale = predictor.run_inference(PATH_FOTO, threshold=0.5, show_plot=True)
 
     # Ora nella variabile 'maschera_finale' hai l'array NumPy della maschera binaria 
