@@ -38,11 +38,16 @@ def get_model_best_metrics():
 
         # 4. Calcolo delle metriche della Best Epoch (Valutazione al volo)
         print("Calcolo metriche sul Train Set...")
-        train_results = model.evaluate(DATASET_CACHE["train_opt"], verbose=0)
+
+        # Valutiamo solo su un sottoinsieme di batch (es. 12 batch da 16 = ~200 immagini)
+        NUM_BATCH_TEST = 1
+
+        print("Calcolo rapido metriche sul Train Set (Campionato)...")
+        train_results = model.evaluate(DATASET_CACHE["train_opt"].take(NUM_BATCH_TEST), verbose=0)
         train_metrics = dict(zip(model.metrics_names, train_results))
 
-        print("Calcolo metriche sul Validation Set...")
-        val_results = model.evaluate(DATASET_CACHE["val_opt"], verbose=0)
+        print("Calcolo rapido metriche sul Validation Set (Campionato)...")
+        val_results = model.evaluate(DATASET_CACHE["val_opt"].take(NUM_BATCH_TEST), verbose=0)
         val_metrics = dict(zip(model.metrics_names, val_results))
 
         # 5. Generazione del Report Finale
