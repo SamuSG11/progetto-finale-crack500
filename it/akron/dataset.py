@@ -17,21 +17,16 @@ class Crack500LocalDataLoader:
         self.img_size = img_size
 
     def _load_with_opencv(self, img_path, mask_path):
-        """
-        Usa la logica esatta del tuo amico con OpenCV, avvolta in una funzione 
-        compatibile con TensorFlow.
-        """
+
         # Trasformiamo i tensori di stringhe in stringhe Python classiche per cv2
         img_path_str = img_path.numpy().decode('utf-8')
         mask_path_str = mask_path.numpy().decode('utf-8')
 
-        # Logica del tuo amico per l'immagine
         img = cv2.imread(img_path_str)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, self.img_size)
         img = img / 255.0
-
-        # Logica del tuo amico per la maschera
+  
         mask = cv2.imread(mask_path_str, cv2.IMREAD_GRAYSCALE)
         mask = cv2.resize(mask, self.img_size, interpolation=cv2.INTER_NEAREST)
         mask = (mask > 127).astype(np.float32)
@@ -55,7 +50,7 @@ class Crack500LocalDataLoader:
         images_dir = self.root_dir / split / "images"
         masks_dir = self.root_dir / split / "masks"
 
-        # Troviamo i file (esattamente come faceva il tuo amico)
+        # Troviamo i file 
         img_paths = sorted([str(p) for p in images_dir.glob("*")])
         mask_paths = sorted([str(p) for p in masks_dir.glob("*")])
 

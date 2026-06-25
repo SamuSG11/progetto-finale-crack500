@@ -2,6 +2,8 @@ from it.akron.dataset import Crack500LocalDataLoader
 from it.akron.metrics import SegmentationMetrics
 from it.akron.unet import UNetStandard
 from it.akron.augmentation import CrackDataAugmenter
+from it.akron.prediction import CrackPredictor
+
 import tensorflow as tf
 import numpy as np
 import os
@@ -84,6 +86,7 @@ def main():
     )
     print("Modello caricato con successo!")
 
+    '''
     print("\nAvvio della valutazione su tutto il Test Set...")
     
     # evaluate() restituisce una lista con i valori delle metriche nell'ordine in cui sono state compilate
@@ -100,6 +103,34 @@ def main():
     for metric_name, value in metrics_summary.items():
         print(f"-> {metric_name:<20}: {value:.4f}")
     print("="*40)
+    '''
+
+# ====================================================================
+# PREVISIONI SU UNA NUOVA IMMAGINE 
+# ====================================================================
+
+    try:
+        custom_obj = {
+            "dice_bce_loss": SegmentationMetrics.dice_bce_loss,
+            "dice_coefficient": SegmentationMetrics.dice_coefficient
+        }
+    except ImportError:
+        custom_obj = {}
+    
+    # 2. Inizializzi il predittore (carica il modello UNA sola volta)
+    predictor = CrackPredictor(
+        model_path="models/best_unet_model.keras", 
+        img_size=(256, 256),
+        custom_objects=custom_obj
+    )
+    
+
+    # 3. Lanci l'inferenza su qualsiasi immagine inserendo semplicemente il percorso della foto
+    PATH_FOTO = "exmples/CRACK500_esempio_immagine.jpg"
+    maschera_finale = predictor.run_inference(PATH_FOTO, threshold=0.5, show_plot=True)
+
+    # Ora nella variabile 'maschera_finale' hai l'array NumPy della maschera binaria 
+    # che puoi salvare su disco, analizzare o usare per calcolare la percentuale di crepe!
 
 
 if __name__ == "__main__":
