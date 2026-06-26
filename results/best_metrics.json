@@ -3,7 +3,7 @@
         "total_parameters": 31049409,
         "trainable_parameters": 31037633,
         "non_trainable_parameters": 11776,
-        "loss_function": "<function SegmentationMetrics.dice_bce_loss at 0x7bd94c40a7a0>",
+        "loss_function": "dice_bce_loss",
         "monitored_metrics": [
             "loss",
             "compile_metrics"
