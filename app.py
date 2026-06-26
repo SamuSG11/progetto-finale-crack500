@@ -7,9 +7,9 @@ from it.akron.api.optimize_bp import optimize_bp
 from it.akron.api.verify_bp import verify_bp
 from it.akron.api.training_bp import model_info_bp
 '''
-from it.akron.api.predict_bp import predict_bp
-from it.akron.api.info_bp import dataset_bp 
-from it.akron.api.model_info_bp import model_info_bp
+from it.akron.api.outputs.predict_bp import predict_bp
+from it.akron.api.outputs.info_bp import dataset_bp 
+from it.akron.api.outputs.model_info_bp import model_info_bp
 
 
 

@@ -1,7 +1,7 @@
 import keras
 from flask import Blueprint, jsonify
 from it.akron.state import DATASET_CACHE
-from it.akron.metrics import SegmentationMetrics
+from it.akron.src.metrics import SegmentationMetrics
 
 
 model_info_bp = Blueprint('model_info', __name__)

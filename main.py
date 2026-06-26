@@ -1,8 +1,8 @@
-from it.akron.dataset import Crack500LocalDataLoader
-from it.akron.metrics import SegmentationMetrics
-from it.akron.unet import UNetStandard
-from it.akron.augmentation import CrackDataAugmenter
-from it.akron.prediction import CrackPredictor
+from it.akron.src.dataset import Crack500LocalDataLoader
+from it.akron.src.metrics import SegmentationMetrics
+from it.akron.src.unet import UNetStandard
+from it.akron.src.augmentation import CrackDataAugmenter
+from it.akron.src.prediction import CrackPredictor
 
 import tensorflow as tf
 import numpy as np
@@ -71,7 +71,8 @@ def main():
 # CARICAMENTO DEL MODELLO
 # =====================================================================
     '''
-    Il modello U-NET è stato addestrato con successo su un notebook in Google Colab e salvato come "best_unet_model.keras" nella cartella /models.
+    Il modello U-NET è stato addestrato con successo su un notebook in Google Colab 
+    e salvato come "best_unet_model.keras" nella cartella /models.
     '''
     MODEL_PATH = "models/best_unet_model.keras"
 
@@ -89,14 +90,9 @@ def main():
     '''
     print("\nAvvio della valutazione su tutto il Test Set...")
     
-    # evaluate() restituisce una lista con i valori delle metriche nell'ordine in cui sono state compilate
     results = model.evaluate(test_ds, verbose=1)
     
-    # Di solito l'ordine è: [Loss, Accuracy, Dice_Coefficient]
-    # Puoi verificare l'ordine esatto stampando model.metrics_names
-    metrics_summary = dict(zip(model.metrics_names, results))
-
-    # --- 4. Stampa del Report Finale ---
+    # --- Stampa del Report Finale ---
     print("\n" + "="*40)
     print("        REPORT PERFORMANCE COMPLETO")
     print("="*40)
@@ -107,7 +103,6 @@ def main():
     # --- INFO 1: I PARAMETRI E L'ARCHITETTURA ---
     print("=== ARCHITETTURA E PARAMETRI ===")
     model.summary() 
-    # Questo ti sputa fuori il numero di parametri totali, addestrabili e non addestrabili.
 
     # --- INFO 2: LE METRICHE DI COMPILAZIONE ---
     print("\n=== METRICHE E LOSS IMPOSTATE ===")
@@ -126,7 +121,7 @@ def main():
     except ImportError:
         custom_obj = {}
     
-    # 2. Inizializzi il predittore (carica il modello UNA sola volta)
+    # Inizializziamo il predittore (carica il modello UNA sola volta)
     predictor = CrackPredictor(
         model_path="models/best_unet_model.keras", 
         img_size=(256, 256),
@@ -134,13 +129,11 @@ def main():
     )
     
 
-    # 3. Lanci l'inferenza su qualsiasi immagine inserendo semplicemente il percorso della foto
+    # Lanciamo l'inferenza su un'immagine inserendo il percorso della foto
     PATH_FOTO = "examples/CRACK500_esempio_immagine.jpg"
     maschera_finale = predictor.run_inference(PATH_FOTO, threshold=0.5, show_plot=True)
 
-    # Ora nella variabile 'maschera_finale' hai l'array NumPy della maschera binaria 
-    # che puoi salvare su disco, analizzare o usare per calcolare la percentuale di crepe!
-
+    # Ora nella variabile 'maschera_finale' abbiamo l'array NumPy della maschera binaria 
 
 if __name__ == "__main__":
     main()

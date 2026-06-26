@@ -22,7 +22,7 @@ class CrackPredictor:
 
     def preprocess_image(self, image_path):
         """
-        Passaggio 2: Pre-elaborazione dell'immagine singola.
+        Pre-elaborazione dell'immagine singola.
         La trasforma nello stesso identico formato richiesto dal dataloader.
         """
         # 1. Carica l'immagine con OpenCV
@@ -50,10 +50,10 @@ class CrackPredictor:
 
     def predict_mask(self, input_batch, threshold=0.5):
         """
-        Passaggio 3: Esecuzione della previsione sulla rete neurale U-Net.
+        Esecuzione della previsione sulla rete neurale U-Net.
         Ritorna la maschera binaria finale (0 = sfondo, 1 = crepa).
         """
-        # Effettua la predizione (mappa di probabilità)
+        # Effettua la previsione (mappa di probabilità)
         prediction = self.model.predict(input_batch, verbose=0)
         
         # Rimuove la dimensione del batch (da 1, 256, 256, 1 a 256, 256)
@@ -66,7 +66,7 @@ class CrackPredictor:
 
     def display_results(self, img_rgb, binary_mask, title="Risultato U-Net"):
         """
-        Passaggio 4: Visualizzazione dei risultati tramite Matplotlib.
+        Visualizzazione dei risultati tramite Matplotlib.
         """
         plt.figure(figsize=(12, 6))
 

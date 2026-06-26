@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-# Assicurati di importare correttamente la classe dal tuo file
-from it.akron.dataset import Crack500LocalDataLoader 
+from it.akron.src.dataset import Crack500LocalDataLoader 
+from it.akron.src.performance_plot import PerformanceVisualizer
 
 dataset_bp = Blueprint('dataset', __name__)
 
@@ -83,3 +83,4 @@ def get_dataset_preview():
             "status": "error",
             "message": f"Errore durante la generazione della preview: {str(e)}"
         }), 500
+

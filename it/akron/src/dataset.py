@@ -2,16 +2,16 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
+import base64
+import random
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Crack500LocalDataLoader:
     """
     Carica il dataset CRACK500 scaricato localmente in una cartella personalizzata.
-    Compatibile al 100% con la pipeline Keras + Augmenter.
     """
     def __init__(self, batch_size=16, img_size=(256, 256)):
-        # base_dir corrisponde al BASE_DIR / "data" del tuo amico
         self.root_dir = BASE_DIR / "data" 
         self.batch_size = batch_size
         self.img_size = img_size
@@ -122,9 +122,6 @@ class Crack500LocalDataLoader:
             Prende un campione CASUALE di uno split, genera la versione originale 
             e la versione preprocessata, convertendole in stringhe Base64.
             """
-            import base64
-            import random # <--- Fondamentale per la scelta casuale
-
             images_dir = self.root_dir / split / "images"
             masks_dir = self.root_dir / split / "masks"
 
@@ -134,7 +131,6 @@ class Crack500LocalDataLoader:
             if not img_paths or not mask_paths:
                 return None
 
-            # --- LA MAGIA RANDOM ---
             # Scegliamo un indice casuale tra 0 e il numero totale di immagini disponibili
             random_idx = random.randint(0, len(img_paths) - 1)
             
@@ -147,7 +143,7 @@ class Crack500LocalDataLoader:
             img_raw = cv2.imread(str(chosen_img_path))
             mask_raw = cv2.imread(str(chosen_mask_path))
 
-            # 2. Applichiamo il preprocess (Logica identica a prima)
+            # 2. Applichiamo il preprocess 
             img_proc = cv2.cvtColor(img_raw, cv2.COLOR_BGR2RGB)
             img_proc = cv2.resize(img_proc, self.img_size)
             img_proc = (img_proc * 255).astype(np.uint8)
@@ -163,8 +159,8 @@ class Crack500LocalDataLoader:
 
             return {
                 "metadata": {
-                    "original_filename": chosen_img_path.name, # Ora mostra il nome dinamico del file
-                    "dataset_index_extracted": random_idx,      # Comodo per debug visivo
+                    "original_filename": chosen_img_path.name, 
+                    "dataset_index_extracted": random_idx,      
                     "original_shape": f"{img_raw.shape[1]}x{img_raw.shape[0]}",
                     "processed_shape": f"{self.img_size[0]}x{self.img_size[1]}"
                 },

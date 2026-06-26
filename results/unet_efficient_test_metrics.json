@@ -1,0 +1,6 @@
+{
+    "test_performance": {
+        "loss": 0.4170384705066681,
+        "compile_metrics": 0.7208042740821838
+    }
+}

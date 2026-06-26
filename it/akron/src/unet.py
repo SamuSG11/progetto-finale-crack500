@@ -4,7 +4,6 @@ from keras import layers
 class UNetStandard:
     """
     Classe per la costruzione di una rete U-Net classica per la segmentazione di immagini.
-    Ideale per immagini di input 256x256x3 e output binari (crepa / sfondo).
     """
     def __init__(self, input_shape=(256, 256, 3), num_classes=1):
         self.input_shape = input_shape
@@ -79,7 +78,7 @@ class UNetStandard:
         c8 = self._double_conv_block(u4, 64)
 
         # ==========================================
-        # 4. TESTA DI OUTPUT (Segmentation Head)
+        # 4. SEGMENTATION HEAD (Output finale)
         # ==========================================
         # Usiamo 1 filtro finale con attivazione Sigmoid: 
         # restituisce una probabilità da 0.0 a 1.0 per ogni singolo pixel.

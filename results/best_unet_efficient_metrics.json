@@ -1,0 +1,22 @@
+{
+    "model_summary": {
+        "total_parameters": 9293924,
+        "trainable_parameters": 9251901,
+        "non_trainable_parameters": 42023,
+        "loss_function": "<function dice_bce_loss at 0x7f4280938d60>",
+        "monitored_metrics": [
+            "loss",
+            "compile_metrics"
+        ]
+    },
+    "best_epoch_metrics": {
+        "train": {
+            "loss": 0.3469943404197693,
+            "compile_metrics": 0.7238641381263733
+        },
+        "validation": {
+            "loss": 0.30303192138671875,
+            "compile_metrics": 0.7919797897338867
+        }
+    }
+}

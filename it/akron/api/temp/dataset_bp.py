@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from it.akron.dataset import Crack500LocalDataLoader
+from it.akron.src.dataset import Crack500LocalDataLoader
 from it.akron.state import DATASET_CACHE
 
 dataset_bp = Blueprint("dataset_bp", __name__)

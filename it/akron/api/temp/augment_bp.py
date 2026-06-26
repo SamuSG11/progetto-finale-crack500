@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from it.akron.augmentation import CrackDataAugmenter
+from it.akron.src.augmentation import CrackDataAugmenter
 from it.akron.state import DATASET_CACHE
 
 augment_bp = Blueprint("augment_bp", __name__)
