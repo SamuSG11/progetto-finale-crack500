@@ -5,7 +5,7 @@ from pathlib import Path
 import base64
 import random
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 class Crack500LocalDataLoader:
     """

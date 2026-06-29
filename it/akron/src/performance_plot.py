@@ -43,6 +43,9 @@ class PerformanceVisualizer:
                 data = json.load(f)
                 test_dice = data.get("test_performance", {}).get("dice_coefficient", 0.0)
 
+                if test_dice == 0.0:
+                    test_dice = data.get("test_performance", {}).get("compile_metrics", 0.0)
+
         return train_dice, val_dice, test_dice
 
     def generate_comparison_chart(self):

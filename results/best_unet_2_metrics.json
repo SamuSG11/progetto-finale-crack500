@@ -11,12 +11,12 @@
     },
     "best_epoch_metrics": {
         "train": {
-            "dice_bce_loss": 0.26524218916893005,
-            "dice_coefficient": 0.8201579451560974
+            "dice_bce_loss": 0.38372325801849365,
+            "dice_coefficient": 0.7201183571546912 
         },
         "validation": {
-            "dice_bce_loss": 0.2879781723022461,
-            "dice_coefficient": 0.8214633464813232
+            "dice_bce_loss": 0.2981345719822938,
+            "dice_coefficient": 0.8127283829948239 
         }
     }
 }

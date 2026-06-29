@@ -1,26 +1,68 @@
 import io
+import os
 import cv2
+import keras
 import numpy as np
-import keras # o import keras a seconda della tua installazione
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, jsonify, request, send_file
 
 predict_bp = Blueprint('predict', __name__)
 
-# Assumiamo che il modello sia caricato globalmente all'avvio
-MODEL_PATH = "models/best_unet_model.keras"
+# =====================================================================
+# CONFIGURAZIONE REGISTRO MODELLI PER PREDIZIONE
+# =====================================================================
+MODELS_CONFIG = {
+    "efficientnet_unet": "models/best_efficientnet_unet.keras",
+    "unet_base": "models/best_unet_model.keras",
+    "unet_aug": "models/best_unet_model_2.keras"
+}
+
+# Dizionario per mantenere i modelli pronti in RAM all'avvio del server
+loaded_models = {}
+
 dependencies = {
     "dice_bce_loss": lambda y_true, y_pred: 0.0,
     "dice_coefficient": lambda y_true, y_pred: 0.0
 }
-model = keras.models.load_model(MODEL_PATH, custom_objects=dependencies, compile=False)
 
+# Caricamento centralizzato all'avvio
+for model_key, model_path in MODELS_CONFIG.items():
+    try:
+        if os.path.exists(model_path):
+            model_obj = keras.models.load_model(model_path, custom_objects=dependencies, compile=False)
+            # Forziamo il calcolo geometrico dei layer per l'input atteso (256x256x3)
+            model_obj.build((None, 256, 256, 3))
+            loaded_models[model_key] = model_obj
+            print(f"=== [PREDICT] MODELLO '{model_key}' CARICATO IN RAM ===")
+        else:
+            print(f"WARNING [PREDICT]: File non trovato per '{model_key}' al percorso: {model_path}")
+    except Exception as e:
+        print(f"ERROR [PREDICT]: Impossibile inizializzare '{model_key}': {e}")
+
+
+# =====================================================================
+# ENDPOINT: PREDIZIONE E OVERLAY (DINAMICO)
+# =====================================================================
 @predict_bp.route("/predict/comparison-overlay", methods=["POST"])
 def predict_comparison_overlay():
     """
     Endpoint che riceve un'immagine di input, predice la maschera delle crepe
-    e restituisce l'immagine originale con la maschera rossa in sovrimpressione.
+    usando il modello selezionato (?model=...) e restituisce l'immagine originale 
+    con la maschera rossa in sovrimpressione.
+    Query param accettati: ?model=efficientnet_unet (Default) o ?model=unet_base
     """
-    # 1. Controllo di sicurezza: il file è presente nella richiesta?
+    # 1. Recuperiamo il modello richiesto dall'URL (Default: efficientnet_unet)
+    selected_model_name = request.args.get('model', 'efficientnet_unet').lower()
+
+    if selected_model_name not in loaded_models:
+        return jsonify({
+            "status": "error",
+            "message": f"Modello '{selected_model_name}' non disponibile o non caricato. Usa: {list(loaded_models.keys())}"
+        }), 400
+
+    # Selezioniamo il modello corretto dal dizionario in RAM
+    target_model = loaded_models[selected_model_name]
+
+    # 2. Controllo di sicurezza: il file è presente nella richiesta?
     if 'image' not in request.files:
         return jsonify({"status": "error", "message": "Nessun file immagine inviato nella chiave 'image'."}), 400
         
@@ -29,7 +71,7 @@ def predict_comparison_overlay():
         return jsonify({"status": "error", "message": "File non valido o vuoto."}), 400
 
     try:
-        # 2. Leggiamo il file inviato e convertiamolo in un'immagine OpenCV
+        # 3. Leggiamo il file inviato e convertiamolo in un'immagine OpenCV
         in_memory_file = file.read()
         nparr = np.frombuffer(in_memory_file, np.uint8)
         img_original = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # Immagine BGR originale
@@ -40,14 +82,14 @@ def predict_comparison_overlay():
         # Salviamo le dimensioni originali per ripristinarle alla fine
         orig_h, orig_w = img_original.shape[0], img_original.shape[1]
 
-        # 3. PREPROCESS: Prepariamo l'immagine per la nostra U-Net (256x256)
+        # 4. PREPROCESS: Prepariamo l'immagine per la nostra U-Net (256x256)
         img_input = cv2.cvtColor(img_original, cv2.COLOR_BGR2RGB)
         img_input = cv2.resize(img_input, (256, 256))
         img_input = img_input / 255.0  # Normalizzazione float32 [0, 1]
         img_input = np.expand_dims(img_input, axis=0)  # Aggiungiamo la dimensione del batch (1, 256, 256, 3)
 
-        # 4. INFERENZA: Prediciamo la maschera
-        prediction = model.predict(img_input, verbose=0) # Output shape: (1, 256, 256, 1)
+        # 5. INFERENZA: Prediciamo la maschera usando il modello scelto
+        prediction = target_model.predict(img_input, verbose=0) # Output shape: (1, 256, 256, 1)
         mask = prediction[0, :, :, 0] # Rimuoviamo il batch e il canale -> (256, 256)
         
         # Applichiamo la soglia (threshold) per rendere la maschera puramente binaria (0 o 255)
@@ -56,7 +98,7 @@ def predict_comparison_overlay():
         # Riportiamo la maschera alle dimensioni dell'immagine originale per un confronto perfetto
         binary_mask_resized = cv2.resize(binary_mask, (orig_w, orig_h), interpolation=cv2.INTER_NEAREST)
 
-        # 5. COSTRUZIONE DEL CONFRONTO (OVERLAY)
+        # 6. COSTRUZIONE DEL CONFRONTO (OVERLAY)
         # Creiamo un'immagine completamente rossa delle stesse dimensioni dell'originale
         red_overlay = np.zeros_like(img_original)
         red_overlay[:] = [0, 0, 255] # BGR: Rosso intenso
@@ -68,20 +110,19 @@ def predict_comparison_overlay():
         # alpha = opacità originale (0.7), beta = opacità crepe rosse (0.3)
         comparison_result = cv2.addWeighted(src1=img_original, alpha=0.7, src2=red_cracks, beta=0.3, gamma=0)
 
-        # 6. ENCODING IN MEMORIA: Trasformiamo il risultato in un file scaricabile al volo
+        # 7. ENCODING IN MEMORIA: Trasformiamo il risultato in un file scaricabile al volo
         _, buffer = cv2.imencode('.jpg', comparison_result)
         io_buf = io.BytesIO(buffer)
 
-        print("Overlay generato con successo! Invio del file immagine...")
+        print(f"Overlay generato con successo usando '{selected_model_name}'! Invio del file immagine...")
         # Restituiamo direttamente il file binario dell'immagine con il giusto MIME type
         return send_file(io_buf, mimetype='image/jpeg')
 
     except Exception as e:
         return jsonify({
             "status": "error",
-            "message": f"Errore durante l'elaborazione dell'immagine: {str(e)}"
+            "message": f"Errore durante l'elaborazione dell'immagine con il modello {selected_model_name}: {str(e)}"
         }), 500
-
 
 
 '''

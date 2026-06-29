@@ -3,20 +3,20 @@
         "total_parameters": 9293924,
         "trainable_parameters": 9251901,
         "non_trainable_parameters": 42023,
-        "loss_function": "<function dice_bce_loss at 0x7f4280938d60>",
+        "loss_function": "dice_bce_loss",
         "monitored_metrics": [
-            "loss",
-            "compile_metrics"
+            "dice_bce_loss",
+            "dice_coefficient"
         ]
     },
     "best_epoch_metrics": {
         "train": {
-            "loss": 0.3469943404197693,
-            "compile_metrics": 0.7238641381263733
+            "dice_bce_loss": 0.3469943404197693,
+            "dice_coefficient": 0.7238641381263733
         },
         "validation": {
-            "loss": 0.30303192138671875,
-            "compile_metrics": 0.7919797897338867
+            "dice_bce_loss": 0.30303192138671875,
+            "dice_coefficient": 0.7919797897338867
         }
     }
 }

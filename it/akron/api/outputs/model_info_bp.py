@@ -2,13 +2,14 @@ import os
 import json
 import keras
 from flask import Blueprint, jsonify, request
+from flask import send_file
 from it.akron.src.performance_plot import PerformanceVisualizer
 
 
 model_info_bp = Blueprint('model_info', __name__)
 
 # =====================================================================
-# CONFIGURAZIONE REGISTRO MODELLI DIZIONARIO DINAMICO
+# CONFIGURAZIONE REGISTRO MODELLI
 # =====================================================================
 MODELS_CONFIG = {
     "efficientnet_unet": {
@@ -20,6 +21,11 @@ MODELS_CONFIG = {
         "model_path": "models/best_unet_model.keras",
         "json_stats_path": "results/best_unet_metrics.json",
         "json_test_path": "results/unet_test_metrics.json" # File di test del modello base
+    },
+    "unet_aug": {
+        "model_path": "models/best_unet_2.keras",
+        "json_stats_path": "results/best_unet_2_metrics.json",
+        "json_test_path": "results/unet_2_test_metrics.json" # File di test del modello con data augmentation
     }
 }
 
@@ -189,7 +195,6 @@ def get_model_test_performance():
 
 
 
-from flask import send_file
 # Se sposti la classe in un altro file (es. utils/visualizer.py), scommenta la riga sotto:
 # from utils.visualizer import PerformanceVisualizer
 

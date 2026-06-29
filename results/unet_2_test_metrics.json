@@ -1,0 +1,6 @@
+{
+    "test_performance": {
+        "bce_dice_loss": 0.409580,
+        "compile_metrics": 0.714934
+    }
+}
