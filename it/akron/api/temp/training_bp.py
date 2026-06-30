@@ -4,11 +4,11 @@ from it.akron.state import DATASET_CACHE
 from it.akron.src.metrics import SegmentationMetrics
 
 
-model_info_bp = Blueprint('model_info', __name__)
+training_bp = Blueprint('training', __name__)
 
 MODEL_PATH = "models/best_unet_model.keras"
 
-@model_info_bp.route("/model/best-metrics", methods=["GET"])
+@training_bp.route("/model/best-metrics", methods=["GET"])
 def get_model_best_metrics():
     """
     Endpoint per estrarre i parametri del modello e calcolare al volo

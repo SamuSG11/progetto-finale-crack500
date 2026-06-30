@@ -10,7 +10,8 @@ L’obiettivo del progetto è sviluppare un modello di image segmentation binari
 
 - Identificare automaticamente la presenza di crepe nelle immagini
 - Generare una maschera pixel-wise (crack / background)
-- Utilizzare una rete neurale convoluzionale (U-Net) per il task di segmentazione
+- Utilizzare diversi tipi di rete neurale convoluzionale
+(U-Net ed EfficientNet) per il task di segmentazione
 
 ## Importazione del Dataset
 
